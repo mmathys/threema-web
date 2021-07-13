@@ -3,6 +3,7 @@
   "short_name": "Threema Web",
   "description": "Chat from your desktop with Threema Web and have full access to all chats, contacts and media files.",
   "display": "standalone",
+  "scope": "https://mmathys.github.io/threema/",
   "icons": [
     {
       "src": "img/favicon/android-icon-36x36.png?v=[[VERSION]]",
