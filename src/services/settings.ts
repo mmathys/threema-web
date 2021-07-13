@@ -15,10 +15,10 @@
  * along with Threema Web. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Logger} from 'ts-log';
-import {AsyncEvent} from 'ts-events';
+import { Logger } from "ts-log";
+import { AsyncEvent } from "ts-events";
 
-import {LogService} from './log';
+import { LogService } from "./log";
 
 class ComposeAreaSettings {
     private readonly settingsService: SettingsService;
@@ -28,11 +28,21 @@ class ComposeAreaSettings {
     }
 
     public getSubmitKey(): threema.ComposeAreaSubmitKey {
-        return this.parseSubmitKey(this.settingsService.retrieveUntrustedKeyValuePair('submitKey', false));
+        return this.parseSubmitKey(
+            this.settingsService.retrieveUntrustedKeyValuePair(
+                "submitKey",
+                false
+            )
+        );
     }
 
-    public setSubmitKey(submitKey: string | threema.ComposeAreaSubmitKey): void {
-        this.settingsService.storeUntrustedKeyValuePair('submitKey', this.parseSubmitKey(submitKey).toString());
+    public setSubmitKey(
+        submitKey: string | threema.ComposeAreaSubmitKey
+    ): void {
+        this.settingsService.storeUntrustedKeyValuePair(
+            "submitKey",
+            this.parseSubmitKey(submitKey).toString()
+        );
     }
 
     private parseSubmitKey(submitKey: any): threema.ComposeAreaSubmitKey {
@@ -61,21 +71,50 @@ class UserInterfaceSettings {
     }
 
     public getUserInterface(): threema.UserInterface {
-        const value: string = this.settingsService.retrieveUntrustedKeyValuePair('userInterface', false);
+        const value: string =
+            this.settingsService.retrieveUntrustedKeyValuePair(
+                "userInterface",
+                false
+            );
 
         switch (value) {
             case threema.UserInterface.Minimal:
-                return threema.UserInterface.Minimal
+                return threema.UserInterface.Minimal;
             default:
-                return threema.UserInterface.Default
+                return threema.UserInterface.Default;
         }
     }
 
     public setUserInterface(userInterface: threema.UserInterface): void {
-        this.settingsService.storeUntrustedKeyValuePair('userInterface', userInterface);
+        this.settingsService.storeUntrustedKeyValuePair(
+            "userInterface",
+            userInterface
+        );
 
         // Emit change
-        this.settingsService.userInterfaceChange.post(userInterface)
+        this.settingsService.userInterfaceChange.post(userInterface);
+    }
+
+    public setBackgroundImageURL(backgroundImageURL: string): void {
+        this.settingsService.storeUntrustedKeyValuePair(
+            "backgroundImageURL",
+            backgroundImageURL
+        );
+        console.log("image url", backgroundImageURL);
+    }
+
+    public getBackgroundImageURL(): string {
+        const value: string =
+            this.settingsService.retrieveUntrustedKeyValuePair(
+                "backgroundImageURL",
+                false
+            );
+
+        if(value) {
+            return value
+        } else {
+            return "https://images.unsplash.com/photo-1624916888948-7015aa2b25b5?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+        }
     }
 }
 
@@ -85,7 +124,7 @@ class UserInterfaceSettings {
  */
 export class SettingsService {
     public readonly settingsChangedEvent = new AsyncEvent<void>();
-    private static STORAGE_KEY_PREFIX = 'settings-';
+    private static STORAGE_KEY_PREFIX = "settings-";
     public readonly composeArea: ComposeAreaSettings;
     public readonly userInterface: UserInterfaceSettings;
     private readonly log: Logger;
@@ -94,9 +133,9 @@ export class SettingsService {
     // Events
     public userInterfaceChange = new AsyncEvent<threema.UserInterface>();
 
-    public static $inject = ['$window', 'LogService'];
+    public static $inject = ["$window", "LogService"];
     constructor($window: ng.IWindowService, logService: LogService) {
-        this.log = logService.getLogger('Settings-S');
+        this.log = logService.getLogger("Settings-S");
         this.storage = $window.localStorage;
         this.composeArea = new ComposeAreaSettings(this);
         this.userInterface = new UserInterfaceSettings(this);
@@ -106,7 +145,7 @@ export class SettingsService {
      * Store settings key-value pair in LocalStorage.
      */
     public storeUntrustedKeyValuePair(key: string, value: string): void {
-        this.log.debug('Storing settings key:', key);
+        this.log.debug("Storing settings key:", key);
         this.storage.setItem(SettingsService.STORAGE_KEY_PREFIX + key, value);
         this.settingsChangedEvent.post();
     }
@@ -117,15 +156,20 @@ export class SettingsService {
      * If the `alwaysCreate` flag is set to `true`, then the key is created
      * with an empty value if it does not yet exist.
      */
-    public retrieveUntrustedKeyValuePair(key: string, alwaysCreate: boolean = true): string {
-        this.log.debug('Retrieving settings key:', key);
+    public retrieveUntrustedKeyValuePair(
+        key: string,
+        alwaysCreate: boolean = true
+    ): string {
+        this.log.debug("Retrieving settings key:", key);
         if (this.hasUntrustedKeyValuePair(key)) {
-            return this.storage.getItem(SettingsService.STORAGE_KEY_PREFIX + key);
+            return this.storage.getItem(
+                SettingsService.STORAGE_KEY_PREFIX + key
+            );
         } else {
             if (alwaysCreate) {
-                this.storeUntrustedKeyValuePair(key, '');
+                this.storeUntrustedKeyValuePair(key, "");
             }
-            return '';
+            return "";
         }
     }
 
@@ -133,7 +177,7 @@ export class SettingsService {
      * Remove settings key-value pair from LocalStorage if it exists.
      */
     public removeUntrustedKeyValuePair(key: string): void {
-        this.log.debug('Removing settings key:', key);
+        this.log.debug("Removing settings key:", key);
         this.storage.removeItem(SettingsService.STORAGE_KEY_PREFIX + key);
         this.settingsChangedEvent.post();
     }
@@ -144,7 +188,9 @@ export class SettingsService {
      * Note that this will return `true` for empty values!
      */
     private hasUntrustedKeyValuePair(key: string): boolean {
-        const item: string = this.storage.getItem(SettingsService.STORAGE_KEY_PREFIX + key);
+        const item: string = this.storage.getItem(
+            SettingsService.STORAGE_KEY_PREFIX + key
+        );
         return item !== null;
     }
 }

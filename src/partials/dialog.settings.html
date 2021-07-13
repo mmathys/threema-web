@@ -84,6 +84,12 @@
                                 </md-radio-button>
                             </md-radio-group>
                         </md-list-item>
+                        <md-list-item>
+                            <md-input-container class="md-block md-hide-errors-spacer">
+                                <label translate>Background Image URL</label>
+                                <input ng-model="ctrl.backgroundImageURL" ng-change="ctrl.setBackgroundImageURL(ctrl.backgroundImageURL)">
+                            </md-input-container>
+                        </md-list-item>
                     </md-list>
                 </section>
             </div>

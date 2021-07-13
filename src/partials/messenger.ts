@@ -246,6 +246,7 @@ class SettingsController extends DialogController {
     private notificationSound: boolean;
     private submitKey: string;
     private userInterface: string;
+    private backgroundImageURL: string;
 
     public static $inject = [
         '$scope', '$mdDialog', '$window', 'SettingsService', 'ThemeService', 'NotificationService',
@@ -269,6 +270,7 @@ class SettingsController extends DialogController {
         this.notificationSound = notificationService.getWantsSound();
         this.submitKey = settingsService.composeArea.getSubmitKey().toString();
         this.userInterface = settingsService.userInterface.getUserInterface().toString();
+        this.backgroundImageURL = settingsService.userInterface.getBackgroundImageURL()
     }
 
     public setWantsNotifications(desktopNotifications: boolean) {
@@ -289,6 +291,10 @@ class SettingsController extends DialogController {
 
     public setUserInterface(userInterface: threema.UserInterface) {
         this.settingsService.userInterface.setUserInterface(userInterface);
+    }
+
+    public setBackgroundImageURL(url: string) {
+        this.settingsService.userInterface.setBackgroundImageURL(url);
     }
 }
 
@@ -363,6 +369,8 @@ class ConversationController {
     public maxTextLength: number;
     public isTyping = (): boolean => false;
 
+    public backgroundImageURL: string ="unitialized"
+
     private uploading = {
         enabled: false,
         value1: 0,
@@ -374,7 +382,7 @@ class ConversationController {
         '$mdDialog', '$mdToast', '$translate', '$filter',
         '$state', '$transitions',
         'LogService', 'WebClientService', 'StateService', 'ReceiverService', 'MimeService',
-        'VersionService', 'ControllerModelService', 'TimeoutService',
+        'VersionService', 'ControllerModelService', 'TimeoutService', 'SettingsService'
     ];
     constructor($stateParams: ConversationStateParams,
                 $scope: ng.IScope,
@@ -392,7 +400,8 @@ class ConversationController {
                 mimeService: MimeService,
                 versionService: VersionService,
                 controllerModelService: ControllerModelService,
-                timeoutService: TimeoutService) {
+                timeoutService: TimeoutService,
+                settingsService: SettingsService) {
         this.$stateParams = $stateParams;
         this.webClientService = webClientService;
         this.receiverService = receiverService;
@@ -410,6 +419,8 @@ class ConversationController {
         this.$mdDialog = $mdDialog;
         this.$mdToast = $mdToast;
         this.$translate = $translate;
+
+        this.backgroundImageURL = settingsService.userInterface.getBackgroundImageURL()
 
         // Close any showing dialogs
         this.$mdDialog.cancel();
