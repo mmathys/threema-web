@@ -9,7 +9,7 @@ export default {
     VERSION: '[[VERSION]]',
 
     // General
-    SELF_HOSTED: false,
+    SELF_HOSTED: true,
     VERSION_MOUNTAIN: 'Säntis',
     VERSION_MOUNTAIN_URL: 'https://en.wikipedia.org/wiki/Säntis',
     VERSION_MOUNTAIN_IMAGE_URL: 'https://en.wikipedia.org/wiki/S%C3%A4ntis#/media/File:S%C3%A4ntis_mountain_by_sunset..JPG',
